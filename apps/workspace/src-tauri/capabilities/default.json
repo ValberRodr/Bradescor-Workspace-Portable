@@ -1,0 +1,1 @@
+{"$schema":"../gen/schemas/desktop-schema.json","identifier":"default","description":"Permissões locais exclusivamente para preview e banco local","windows":["main"],"permissions":["core:default","sql:default","sql:allow-execute"]}
