@@ -37,3 +37,15 @@ O arquivo criptografado de credenciais, por si só, **não substitui ACLs NTFS/S
 3. BWP-003 e BWP-040: executável de prova e SID Windows nativo.
 4. BWP-004 e BWP-005: tokens Bradescor Glass e AppShell.
 5. BWP-007 a BWP-018: protocolo de dados, sincronização SMB e testes críticos.
+
+
+## Desenvolvimento em andamento — primeira entrega
+
+O código-fonte inicial está em [`apps/workspace`](apps/workspace). É **somente uma prévia técnica local**: possui navegação React/Tauri, tarefas/projetos fictícios e base SQLite local do desktop. Não há sincronização SMB nem autenticação corporativa implementada.
+
+- Iniciar visualização web em ambiente de desenvolvimento: `cd apps/workspace && npm install && npm run dev`
+- Rodar testes após instalar dependências: `npm test`
+- Iniciar aplicativo Tauri em Windows com Rust: `npm run desktop:dev`
+- Consultar [estado de desenvolvimento](docs/STATUS_DESENVOLVIMENTO.md).
+
+**Não utilizar com credenciais nem dados reais.** A leitura nativa do SID está presente como bloco de construção; não concede acesso por si só.
