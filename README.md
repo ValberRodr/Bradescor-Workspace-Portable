@@ -49,3 +49,7 @@ O código-fonte inicial está em [`apps/workspace`](apps/workspace). É **soment
 - Consultar [estado de desenvolvimento](docs/STATUS_DESENVOLVIMENTO.md).
 
 **Não utilizar com credenciais nem dados reais.** A leitura nativa do SID está presente como bloco de construção; não concede acesso por si só.
+
+## Executável portátil
+
+A configuração Tauri de desenvolvimento foi alterada para **não produzir instaladores** (`bundle.active=false`). Validar o binário Windows após instalar Node.js, Rust e WebView2. O app ainda não possui autenticação nem sincronização SMB.

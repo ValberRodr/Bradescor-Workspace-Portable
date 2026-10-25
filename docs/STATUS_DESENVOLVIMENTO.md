@@ -30,3 +30,5 @@ Não colocar dados reais no preview. O SID exibido é **identificação**, não 
 4. Registrar inconsistências do compilador e resolver antes de marcar `BWP-003` como concluída.
 
 **Sem automação CI ou workflow GitHub Actions** nesta fase, conforme limitação de custos acordada.
+
+- O instalador NSIS foi desativado (`bundle.active=false`), seguindo a exigência de executável portátil. A compilação em Windows permanece pendente.
