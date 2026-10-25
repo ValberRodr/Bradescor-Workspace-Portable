@@ -1,0 +1,838 @@
+{
+  "project": "Bradescor Workspace Portable",
+  "status": "planning",
+  "tasks": [
+    {
+      "id": "BWP-001",
+      "title": "Fixar ADR Portable sem servidor",
+      "milestone": "M0",
+      "priority": "P0",
+      "size": "S",
+      "status": "A fazer",
+      "dependencies": [],
+      "scope": "Formalizar a arquitetura Windows Portable sem servidor, duas aplicações (Workspace e Admin), autenticação vinculada ao SID da sessão Windows, armazenamento criptografado por usuário e exclusão integral da infraestrutura de reuniões.",
+      "acceptance_criteria": [
+        "ADR aprovada: React/Tauri/Rust/SQLite local/SMB, sem FastAPI, PostgreSQL ou servidor HTTP.",
+        "Dois executáveis separados documentados e sem campo de usuário editável para login.",
+        "Reuniões e infraestrutura de Teams fora de escopo; Calendar somente prazos e marcos."
+      ]
+    },
+    {
+      "id": "BWP-002",
+      "title": "Criar monorepo React + Vite + Tauri 2",
+      "milestone": "M0",
+      "priority": "P0",
+      "size": "M",
+      "status": "A fazer",
+      "dependencies": [
+        "BWP-001"
+      ],
+      "scope": "Iniciar frontend tipado e backend Rust no desktop com comandos mínimos de comunicação; reter HTML de referência isolado.",
+      "acceptance_criteria": [
+        "npm run dev abre interface durante desenvolvimento.",
+        "cargo tauri dev inicia janela nativa e chama comando Rust de diagnóstico.",
+        "Pastas app, src-tauri, docs, tests e reference separadas."
+      ]
+    },
+    {
+      "id": "BWP-003",
+      "title": "Provar EXE portátil em Windows corporativo",
+      "milestone": "M0",
+      "priority": "P0",
+      "size": "M",
+      "status": "A fazer",
+      "dependencies": [
+        "BWP-002"
+      ],
+      "scope": "Gerar prova de conceito de EXE portátil sem servidor e validar identidade nativa da sessão Windows via token de acesso, além de pré-requisito WebView2.",
+      "acceptance_criteria": [
+        "Binário abre sem Node ou servidor de desenvolvimento.",
+        "Token de acesso Windows identifica SID e conta, independentemente de variável de ambiente.",
+        "WebView2 e política corporativa de execução são documentados."
+      ]
+    },
+    {
+      "id": "BWP-004",
+      "title": "Implementar tokens Bradescor Glass",
+      "milestone": "M0",
+      "priority": "P0",
+      "size": "M",
+      "status": "A fazer",
+      "dependencies": [
+        "BWP-002"
+      ],
+      "scope": "Criar temas Light, Dark Glass e Auto, tokens semânticos, contraste e redução de transparência. Não incluir fontes/logos proprietários não licenciados.",
+      "acceptance_criteria": [
+        "Tema claro usa #CC092F para ação principal, sem excesso de vermelho.",
+        "Bradesco Sans só é ativada com licença/arquivos autorizados; fallback Inter/system-ui sem quebrar layout.",
+        "Tokens centralizados, sem cores hardcoded em componentes."
+      ]
+    },
+    {
+      "id": "BWP-005",
+      "title": "Criar AppShell e biblioteca de componentes",
+      "milestone": "M0",
+      "priority": "P0",
+      "size": "L",
+      "status": "A fazer",
+      "dependencies": [
+        "BWP-004"
+      ],
+      "scope": "AppShell com navegação Home, Tasks, Calendar, Projects, Insights, Team, Settings; Login read-only vindo do Windows; cards, estados, busca e modais.",
+      "acceptance_criteria": [
+        "Sete rotas navegáveis com dados demonstrativos separados.",
+        "Tela de login nunca permite digitar ou selecionar identidade do Windows.",
+        "Componentes acessíveis com navegação por teclado."
+      ]
+    },
+    {
+      "id": "BWP-006",
+      "title": "Garantir responsividade e identidade visual",
+      "milestone": "M0",
+      "priority": "P1",
+      "size": "M",
+      "status": "A fazer",
+      "dependencies": [
+        "BWP-005"
+      ],
+      "scope": "Conferir telas em 1440, 1280, 768 e 390px; registrar capturas comparativas com a referência.",
+      "acceptance_criteria": [
+        "Não há overflow horizontal e menu não obstrui conteúdo.",
+        "Light, Dark e baixa transparência têm contraste adequado.",
+        "Capturas Playwright por tema e largura ficam em docs/testes."
+      ]
+    },
+    {
+      "id": "BWP-007",
+      "title": "Definir esquema de dados e protocolo de operações",
+      "milestone": "M1",
+      "priority": "P0",
+      "size": "L",
+      "status": "A fazer",
+      "dependencies": [
+        "BWP-001"
+      ],
+      "scope": "Modelar projects, tasks, milestones, teams, users, focus, preferences, identidades Windows SID e autorização; protocolo de operações imutáveis, versão de esquema, sem entidades de reuniões ou eventos independentes.",
+      "acceptance_criteria": [
+        "Operação contém UUID, entity_id, actor_sid, occurred_at_utc, expected_revision, schema_version, kind e payload.",
+        "Nenhuma entidade meeting/meeting_invite/meeting_notification/meeting_calendar será criada.",
+        "Mudanças semânticas usam validação Rust, tombstones e migrações versionadas."
+      ]
+    },
+    {
+      "id": "BWP-008",
+      "title": "Criar seletor e validador de pasta de rede UNC",
+      "milestone": "M1",
+      "priority": "P0",
+      "size": "M",
+      "status": "A fazer",
+      "dependencies": [
+        "BWP-007"
+      ],
+      "scope": "Oferecer configuração inicial de \\servidor\\compartilhamento, com teste de leitura/gravação, latência e diagnóstico.",
+      "acceptance_criteria": [
+        "Suporta caminho UNC e caminhos com acentos/espaços e caracteres válidos de pasta Windows.",
+        "Distingue offline, acesso negado, somente leitura, inexistente e latência alta.",
+        "Não grava na rede sem confirmação da pasta escolhida."
+      ]
+    },
+    {
+      "id": "BWP-009",
+      "title": "Implementar SQLite local e migrações",
+      "milestone": "M1",
+      "priority": "P0",
+      "size": "L",
+      "status": "A fazer",
+      "dependencies": [
+        "BWP-007",
+        "BWP-002"
+      ],
+      "scope": "Criar banco por usuário em pasta local de dados de aplicação; índices, schema_version e migrações idempotentes.",
+      "acceptance_criteria": [
+        "O banco nunca é criado nem aberto em caminho UNC.",
+        "Após reiniciar aplicativo, registros locais e fila pendente persistem.",
+        "Migração de schema tem teste de upgrade e rollback operacional com backup."
+      ]
+    },
+    {
+      "id": "BWP-010",
+      "title": "Implementar gravação segura no compartilhamento",
+      "milestone": "M1",
+      "priority": "P0",
+      "size": "L",
+      "status": "A fazer",
+      "dependencies": [
+        "BWP-008",
+        "BWP-007"
+      ],
+      "scope": "Publicar cada operação em arquivo único; escrever .tmp na mesma pasta, fechar/sincronizar arquivo, renomear para .json e nunca sobrescrever operação de outro cliente.",
+      "acceptance_criteria": [
+        "Cada writer usa operation_id único e não modifica arquivos publicados.",
+        "Leitores ignoram temporários e arquivos parcialmente preparados.",
+        "Falha ou interrupção durante a gravação não produz operação publicada incompleta."
+      ]
+    },
+    {
+      "id": "BWP-011",
+      "title": "Construir sincronizador incremental e idempotente",
+      "milestone": "M1",
+      "priority": "P0",
+      "size": "XL",
+      "status": "A fazer",
+      "dependencies": [
+        "BWP-009",
+        "BWP-010"
+      ],
+      "scope": "Ler novas operações válidas, reconciliar índices locais e aplicar cada operação uma única vez; incluir varredura periódica de reconciliação completa.",
+      "acceptance_criteria": [
+        "Duas leituras do mesmo arquivo não duplicam operações.",
+        "Eventos publicados atrasados não são perdidos por diferença de relógio entre PCs.",
+        "Novas alterações aparecem em outro cliente sem recarregar manualmente, dentro da cadência definida."
+      ]
+    },
+    {
+      "id": "BWP-012",
+      "title": "Criar fila offline e reconexão automática",
+      "milestone": "M1",
+      "priority": "P0",
+      "size": "L",
+      "status": "A fazer",
+      "dependencies": [
+        "BWP-009",
+        "BWP-011"
+      ],
+      "scope": "Registrar mutações locais pendentes, reprocessar com retry exponencial + jitter e estado explícito para o usuário.",
+      "acceptance_criteria": [
+        "Sem acesso à rede o usuário consegue criar/editar localmente, vendo estado Pendente.",
+        "Após reconectar operações são publicadas sem duplicar.",
+        "Desligamento inesperado preserva fila pendente."
+      ]
+    },
+    {
+      "id": "BWP-013",
+      "title": "Detectar e resolver conflitos concorrentes",
+      "milestone": "M1",
+      "priority": "P0",
+      "size": "XL",
+      "status": "A fazer",
+      "dependencies": [
+        "BWP-011",
+        "BWP-012"
+      ],
+      "scope": "Criar detecção por expected_revision; quando duas mudanças partem da mesma revisão, preservar ambas e expor comparação para resolução, sem sobrescrita silenciosa.",
+      "acceptance_criteria": [
+        "Dois PCs que editam o mesmo campo offline geram conflito auditável.",
+        "O usuário consegue escolher uma versão ou conciliar campos antes de publicar resolução.",
+        "Excluir/editar simultaneamente não apaga dados silenciosamente."
+      ]
+    },
+    {
+      "id": "BWP-014",
+      "title": "Criar indicador de status da sincronização",
+      "milestone": "M1",
+      "priority": "P1",
+      "size": "M",
+      "status": "A fazer",
+      "dependencies": [
+        "BWP-011",
+        "BWP-012"
+      ],
+      "scope": "Exibir Online, Sincronizando, Offline, Pendente, Erro e Conflitos no header com logs simplificados.",
+      "acceptance_criteria": [
+        "Estados correspondem à condição real de conectividade e fila.",
+        "Usuário pode ver quantas operações aguardam, falhas e última sincronização.",
+        "Botão Reprocessar não provoca duplicidade."
+      ]
+    },
+    {
+      "id": "BWP-015",
+      "title": "Versionar esquema e compatibilidade de clientes",
+      "milestone": "M1",
+      "priority": "P0",
+      "size": "M",
+      "status": "A fazer",
+      "dependencies": [
+        "BWP-007",
+        "BWP-011"
+      ],
+      "scope": "Negociar schema_version pelo manifesto estável na pasta de rede, bloquear escritas incompatíveis e manter leitura quando possível.",
+      "acceptance_criteria": [
+        "Executável antigo não grava operação incompatível com dados novos.",
+        "Atualização de versão não perde operações pendentes.",
+        "Tela de versão incompatível apresenta instruções objetivas."
+      ]
+    },
+    {
+      "id": "BWP-016",
+      "title": "Validar identidade Windows e ACLs NTFS/SMB",
+      "milestone": "M1",
+      "priority": "P0",
+      "size": "L",
+      "status": "A fazer",
+      "dependencies": [
+        "BWP-008",
+        "BWP-040"
+      ],
+      "scope": "Analisar e aplicar ACLs reais de pastas de credenciais e dados; obter SID do token Windows e impedir acesso cruzado por nomes coincidentes, sem supor proteção apenas pelo frontend.",
+      "acceptance_criteria": [
+        "Conta é identificada por SID retirado do token do processo (não USERNAME/env/Javascript).",
+        "Pasta credenciais tem ACLs por usuário, administrador e política de TI comprovadas, inclusive compartilhamento SMB.",
+        "Usuários distintos com mesmo nome local em duas máquinas não são confundidos.",
+        "Sem ACL suficiente a aplicação bloqueia a operação e exibe erro seguro."
+      ]
+    },
+    {
+      "id": "BWP-017",
+      "title": "Registrar auditoria e falhas de operação",
+      "milestone": "M1",
+      "priority": "P0",
+      "size": "M",
+      "status": "A fazer",
+      "dependencies": [
+        "BWP-011"
+      ],
+      "scope": "Associar autoria, host, hora, tipo e resultado às operações, mantendo rastreabilidade sem dados sensíveis nos logs de diagnóstico.",
+      "acceptance_criteria": [
+        "Criar, editar, concluir, excluir e resolver conflitos gera operação rastreável.",
+        "Erros incluem código, contexto seguro e correlation_id.",
+        "Registros não expõem segredos ou conteúdo de dados protegidos desnecessariamente."
+      ]
+    },
+    {
+      "id": "BWP-018",
+      "title": "Implementar backup, restauração e reparo",
+      "milestone": "M1",
+      "priority": "P0",
+      "size": "L",
+      "status": "A fazer",
+      "dependencies": [
+        "BWP-010",
+        "BWP-011",
+        "BWP-015"
+      ],
+      "scope": "Rotina operacional de backup da pasta compartilhada e reconstrução do SQLite a partir do log de operações.",
+      "acceptance_criteria": [
+        "Recuperação do cache local funciona após exclusão controlada do banco local.",
+        "Restauração é testada com snapshot/backup coerente.",
+        "Falhas de leitura de arquivos invalidos são isoladas sem derrubar o app."
+      ]
+    },
+    {
+      "id": "BWP-019",
+      "title": "Implementar cadastro e gestão de projetos",
+      "milestone": "M2",
+      "priority": "P0",
+      "size": "L",
+      "status": "A fazer",
+      "dependencies": [
+        "BWP-005",
+        "BWP-013"
+      ],
+      "scope": "Gerir projetos autorizados com marcos e prazos, vinculando alterações ao SID de autoria e aplicando separação de dados permitida pelas ACLs da rede.",
+      "acceptance_criteria": [
+        "Projeto criado em um PC aparece em outro após sincronização.",
+        "Marcos, progresso e status refletem dados consistentes.",
+        "Excluir usa tombstone para evitar ressurreição após reconexão."
+      ]
+    },
+    {
+      "id": "BWP-020",
+      "title": "Implementar tarefas e prioridades",
+      "milestone": "M2",
+      "priority": "P0",
+      "size": "XL",
+      "status": "A fazer",
+      "dependencies": [
+        "BWP-005",
+        "BWP-013",
+        "BWP-019"
+      ],
+      "scope": "CRUD tarefas, prioridade, status, prazo, projeto e busca/filtro; atualização otimista e sincronização.",
+      "acceptance_criteria": [
+        "Criar, alterar, concluir e reabrir tarefa persiste e propaga entre PCs.",
+        "Filtros atrasadas/hoje/sem prazo/próximas estão corretos.",
+        "Contagens da sidebar e listas são derivadas dos dados reais."
+      ]
+    },
+    {
+      "id": "BWP-021",
+      "title": "Implementar responsáveis e visão por equipe",
+      "milestone": "M2",
+      "priority": "P1",
+      "size": "L",
+      "status": "A fazer",
+      "dependencies": [
+        "BWP-020",
+        "BWP-016",
+        "BWP-041",
+        "BWP-043"
+      ],
+      "scope": "Equipe derivada do cadastro administrativo; responsáveis selecionados dentre contas ativas vinculadas ao SID Windows. Não disponibilizar convite nem cadastro por usuário final.",
+      "acceptance_criteria": [
+        "Somente contas ativas provisionadas no Admin podem receber tarefas.",
+        "Perfil e email são provenientes do registro administrativo validado.",
+        "Ações não autorizadas não dependem apenas de ocultação de botões na UI."
+      ]
+    },
+    {
+      "id": "BWP-022",
+      "title": "Calendário de prazos e marcos (sem reuniões)",
+      "milestone": "M2",
+      "priority": "P0",
+      "size": "L",
+      "status": "A fazer",
+      "dependencies": [
+        "BWP-005",
+        "BWP-013"
+      ],
+      "scope": "Visualizações mensal e semanal derivadas de datas de vencimento de tarefas e marcos dos projetos. Não criar agenda própria, convites, integração Teams, reuniões, nem eventos independentes.",
+      "acceptance_criteria": [
+        "Tarefas e marcos aparecem nas respectivas datas sem duplicidade.",
+        "Alterar prazo no módulo de origem atualiza Calendar após sincronização.",
+        "Nenhuma tela cria reuniões ou eventos; ausência de reuniões não causa card de erro."
+      ]
+    },
+    {
+      "id": "BWP-023",
+      "title": "Implementar Pomodoro e sessões de foco",
+      "milestone": "M2",
+      "priority": "P1",
+      "size": "M",
+      "status": "A fazer",
+      "dependencies": [
+        "BWP-005",
+        "BWP-009"
+      ],
+      "scope": "Cronômetro local com start/pause/resume/+5 min/stop; armazenar timestamps e associar tarefa opcional.",
+      "acceptance_criteria": [
+        "Timer permanece correto ao trocar de tela, bloquear o Windows e reabrir aplicativo.",
+        "Histórico local registra sessões sem depender de servidor.",
+        "Preferências de duração são respeitadas."
+      ]
+    },
+    {
+      "id": "BWP-024",
+      "title": "Conectar dashboard Home a dados reais",
+      "milestone": "M2",
+      "priority": "P0",
+      "size": "L",
+      "status": "A fazer",
+      "dependencies": [
+        "BWP-020",
+        "BWP-022",
+        "BWP-023"
+      ],
+      "scope": "Dashboard Today com tarefas, metas de foco, entregas e marcos; substituir área de reuniões da demo por prazos e entregas, sem contadores de reuniões.",
+      "acceptance_criteria": [
+        "Indicadores são calculados com dados persistidos, sem valores inventados.",
+        "Home não possui métricas de reunião ou agenda de Teams.",
+        "Sidebar, cards e gráficos refletem alterações sincronizadas; empty states funcionam."
+      ]
+    },
+    {
+      "id": "BWP-025",
+      "title": "Criar Insights inicial com indicadores auditáveis",
+      "milestone": "M2",
+      "priority": "P1",
+      "size": "L",
+      "status": "A fazer",
+      "dependencies": [
+        "BWP-024"
+      ],
+      "scope": "Gráficos por projeto/período, concluídas, atrasadas, backlog e foco, com definição documentada de cada métrica.",
+      "acceptance_criteria": [
+        "Filtros alteram séries corretamente sem chamar servidor.",
+        "Totais reconciliam com dados do banco local.",
+        "Não atribui percentuais individuais de produtividade sem regra explicada."
+      ]
+    },
+    {
+      "id": "BWP-026",
+      "title": "Implementar Settings e preferências persistentes",
+      "milestone": "M2",
+      "priority": "P1",
+      "size": "M",
+      "status": "A fazer",
+      "dependencies": [
+        "BWP-004",
+        "BWP-009",
+        "BWP-014",
+        "BWP-044"
+      ],
+      "scope": "Settings com aparência, notificações locais pertinentes, cache, perfil informativo e ação de troca de senha do Workspace; não permitir editar nome Windows/SID.",
+      "acceptance_criteria": [
+        "Identidade Windows e SID não são editáveis no Workspace.",
+        "Trocar senha chama rotina Rust com validação de senha atual e atualização protegida por ACL.",
+        "Temas e acessibilidade persistem no cache local."
+      ]
+    },
+    {
+      "id": "BWP-027",
+      "title": "Implementar busca global e exportação local",
+      "milestone": "M2",
+      "priority": "P1",
+      "size": "M",
+      "status": "A fazer",
+      "dependencies": [
+        "BWP-020",
+        "BWP-019",
+        "BWP-022"
+      ],
+      "scope": "Busca unificada apenas por tarefas, projetos e marcos; exportação local dos registros aos quais a conta tem acesso.",
+      "acceptance_criteria": [
+        "Busca não lista eventos/reuniões removidos do escopo.",
+        "Exportação respeita acesso real do usuário atual.",
+        "CSV/JSON têm codificação consistente e sem execução de fórmulas inseguras."
+      ]
+    },
+    {
+      "id": "BWP-028",
+      "title": "Criar testes unitários Rust do protocolo e Sync",
+      "milestone": "M3",
+      "priority": "P0",
+      "size": "L",
+      "status": "A fazer",
+      "dependencies": [
+        "BWP-013",
+        "BWP-015"
+      ],
+      "scope": "Testar schema, parser, idempotência, falhas de gravação, reconciliação, conflitos e fila offline com testes automatizados.",
+      "acceptance_criteria": [
+        "Cobertura dos cenários críticos de perda/duplicação/conflito existe e passa.",
+        "Fixtures incluem acentos, caminhos UNC, JSON inválido e schema desconhecido.",
+        "Teste de interrupção entre arquivo temporário e rename não publica operação incompleta."
+      ]
+    },
+    {
+      "id": "BWP-029",
+      "title": "Testar multiusuário e falhas de rede",
+      "milestone": "M3",
+      "priority": "P0",
+      "size": "XL",
+      "status": "A fazer",
+      "dependencies": [
+        "BWP-020",
+        "BWP-028"
+      ],
+      "scope": "Cenários concorrentes SMB, revogação, autenticação por SID, corrupção, conflitos e quedas de rede com duas contas e duas máquinas.",
+      "acceptance_criteria": [
+        "Duas máquinas sincronizam projetos/tarefas sem sobrescrita silenciosa.",
+        "Conta revogada não autentica no próximo login; modo desconectado não ignora revogação.",
+        "A autenticação com mesmo nome, mas SID distinto é recusada."
+      ]
+    },
+    {
+      "id": "BWP-030",
+      "title": "Automatizar testes de UI e acessibilidade",
+      "milestone": "M3",
+      "priority": "P1",
+      "size": "L",
+      "status": "A fazer",
+      "dependencies": [
+        "BWP-024",
+        "BWP-025",
+        "BWP-026",
+        "BWP-043",
+        "BWP-044"
+      ],
+      "scope": "Testes de React e Tauri para navegação, acessibilidade, autenticação sem campo de usuário, troca de senha e inexistência de reuniões.",
+      "acceptance_criteria": [
+        "Login mostra conta Windows read-only, sem opção de inserir outro nome.",
+        "Troca de senha e erros de autenticação têm testes de interface.",
+        "Não existem telas ou ações de reunião."
+      ]
+    },
+    {
+      "id": "BWP-031",
+      "title": "Aplicar hardening local e de arquivos",
+      "milestone": "M3",
+      "priority": "P0",
+      "size": "L",
+      "status": "A fazer",
+      "dependencies": [
+        "BWP-029",
+        "BWP-016",
+        "BWP-042",
+        "BWP-043"
+      ],
+      "scope": "Restringir IPC Tauri, paths UNC, symlink/path traversal, operações por SID do token e ACLs; proteger credenciais, política de conteúdo e separação Admin/Workspace.",
+      "acceptance_criteria": [
+        "Cada comando nativo sensível verifica sessão Windows, status e permissões, não confia em user_id enviado pelo React.",
+        "Segredos ou chaves mestras não são embutidos no executável nem armazenados ao lado de arquivos cifrados.",
+        "Não existe elevação de privilégios por editar JSON, trocar nome Windows ou iniciar Admin como não administrador."
+      ]
+    },
+    {
+      "id": "BWP-032",
+      "title": "Validar desempenho com volume e histórico",
+      "milestone": "M3",
+      "priority": "P1",
+      "size": "L",
+      "status": "A fazer",
+      "dependencies": [
+        "BWP-029"
+      ],
+      "scope": "Carregar 10 mil tarefas / histórico representativo e mensurar abertura, reindexação, sync e travamentos com rede lenta.",
+      "acceptance_criteria": [
+        "Interface permanece responsiva ao indexar em background.",
+        "Existe progresso e cancelamento para reindexação longa.",
+        "Limites operacionais e estratégia de arquivamento ficam documentados."
+      ]
+    },
+    {
+      "id": "BWP-033",
+      "title": "Gerar EXEs portáteis Workspace e Admin",
+      "milestone": "M3",
+      "priority": "P0",
+      "size": "M",
+      "status": "A fazer",
+      "dependencies": [
+        "BWP-003",
+        "BWP-031",
+        "BWP-041"
+      ],
+      "scope": "Criar builds Windows separados do Workspace e do Admin, com permissões distintas, assets locais, versionamento e assinatura corporativa quando disponível.",
+      "acceptance_criteria": [
+        "ZIP contém BradescorWorkspace.exe e BradescorWorkspaceAdmin.exe claramente separados.",
+        "Usuário sem grupo administrativo não consegue usar operações de provisionamento.",
+        "WebView2 e checksums de ambos os binários são documentados."
+      ]
+    },
+    {
+      "id": "BWP-034",
+      "title": "Criar runbook, suporte e homologação",
+      "milestone": "M3",
+      "priority": "P0",
+      "size": "M",
+      "status": "A fazer",
+      "dependencies": [
+        "BWP-029",
+        "BWP-033",
+        "BWP-046"
+      ],
+      "scope": "Runbook para uso e suporte, ACLs por usuário e admin, procedimento de provisionamento SID, troca e reset de senha, expiração da sessão, corrupção, contingência SMB e recuperação.",
+      "acceptance_criteria": [
+        "Outro analista provisiona usuário pela ferramenta Admin sem edição manual de arquivos.",
+        "Suporte demonstra revogação de conta e troca de senha vinculadas ao SID.",
+        "Pessoas sem permissão Windows não conseguem ler ou escrever credenciais de terceiros."
+      ]
+    },
+    {
+      "id": "BWP-035",
+      "title": "Adicionar anexos compartilhados com validação",
+      "milestone": "M4",
+      "priority": "P2",
+      "size": "L",
+      "status": "A fazer",
+      "dependencies": [
+        "BWP-034"
+      ],
+      "scope": "Anexos por tarefa/projeto com tamanho, extensões permitidas, hashing e cópia segura para a rede.",
+      "acceptance_criteria": [
+        "Anexo incorreto ou perigoso é recusado.",
+        "Referências quebradas têm diagnóstico e permitem reparo.",
+        "Limites definidos conforme política corporativa."
+      ]
+    },
+    {
+      "id": "BWP-036",
+      "title": "Notificações locais de prazos e tarefas",
+      "milestone": "M4",
+      "priority": "P2",
+      "size": "M",
+      "status": "A fazer",
+      "dependencies": [
+        "BWP-034"
+      ],
+      "scope": "Avisos locais de tarefas e entregas; não criar notificações de reuniões ou Teams.",
+      "acceptance_criteria": [
+        "Alertas de prazo funcionam com app aberto ou conforme capacidade da instalação.",
+        "Não se afirma entrega de aviso com app fechado sem mecanismo executante.",
+        "Usuário pode desativar alertas."
+      ]
+    },
+    {
+      "id": "BWP-037",
+      "title": "Otimizar compactação segura e histórico de rede",
+      "milestone": "M4",
+      "priority": "P2",
+      "size": "XL",
+      "status": "A fazer",
+      "dependencies": [
+        "BWP-029"
+      ],
+      "scope": "Planejar arquivamento de operações antigas e checkpoints usando coordenação/lock validado no SMB; nunca deletar eventos sem snapshot consistente.",
+      "acceptance_criteria": [
+        "Cliente desatualizado consegue recuperar operações ou recebe alerta de versão.",
+        "Restauração da pasta após backup reproduz os dados.",
+        "Compactação não roda automaticamente sem homologação."
+      ]
+    },
+    {
+      "id": "BWP-038",
+      "title": "Planejar distribuição com atualização controlada",
+      "milestone": "M4",
+      "priority": "P2",
+      "size": "M",
+      "status": "A fazer",
+      "dependencies": [
+        "BWP-033"
+      ],
+      "scope": "Criar estratégia de verificação de versão via arquivo de manifesto e download manual a partir de origem aprovada; assinatura corporativa quando disponível.",
+      "acceptance_criteria": [
+        "Versão atual e disponível são exibidas sem executar binários remotos.",
+        "Atualização não substitui EXE em execução.",
+        "Assinatura/autorização Windows é tratada com TI."
+      ]
+    },
+    {
+      "id": "BWP-039",
+      "title": "Avaliar evolução para backend centralizado",
+      "milestone": "M4",
+      "priority": "P2",
+      "size": "M",
+      "status": "A fazer",
+      "dependencies": [
+        "BWP-034"
+      ],
+      "scope": "Definir gatilhos objetivos (conflitos, quantidade de usuários, latência, RBAC rígido, auditoria confiável) para migração futura sem reescrever React.",
+      "acceptance_criteria": [
+        "Critérios de decisão têm métricas observáveis.",
+        "Repositório separa interfaces de persistência do React.",
+        "Plano de migração de dados da rede para serviço central é desenhado."
+      ]
+    },
+    {
+      "id": "BWP-040",
+      "title": "Capturar SID da sessão Windows no Rust",
+      "milestone": "M0",
+      "priority": "P0",
+      "size": "M",
+      "status": "A fazer",
+      "dependencies": [
+        "BWP-002"
+      ],
+      "scope": "Capturar o SID do token de acesso do processo, domínio e nome de conta por APIs nativas Windows, nunca por variáveis de ambiente/controlado no JS.",
+      "acceptance_criteria": [
+        "SDK captura SID e DOMAIN\\username da conta logada em Windows real.",
+        "A UI só recebe identificador de exibição; SID fica sob controle do motor Rust.",
+        "Contas locais homônimas em máquinas diferentes produzem identidades distintas."
+      ]
+    },
+    {
+      "id": "BWP-041",
+      "title": "Criar aplicativo exclusivo BradescorWorkspaceAdmin",
+      "milestone": "M1",
+      "priority": "P0",
+      "size": "L",
+      "status": "A fazer",
+      "dependencies": [
+        "BWP-040",
+        "BWP-016"
+      ],
+      "scope": "Provisionar SID Windows por conta de domínio, nome, email, função e estado; cadastrar com senha temporária, suspender, reativar e redefinir senha; aplicação separada.",
+      "acceptance_criteria": [
+        "Somente identidade Windows incluída no grupo/lista de administradores e autorizada pelas ACLs abre ações do Admin.",
+        "Não existe botão para usuário comum cadastrar outras pessoas ou trocar sua identidade vinculada.",
+        "Cadastro exige SID válido; colisão nome/email é sinalizada, sem reaproveitar acesso.",
+        "Primeiro administrador é provisionado via procedimento controlado pela TI, sem senha master embutida."
+      ]
+    },
+    {
+      "id": "BWP-042",
+      "title": "Proteger arquivos de credenciais e chaves",
+      "milestone": "M1",
+      "priority": "P0",
+      "size": "XL",
+      "status": "A fazer",
+      "dependencies": [
+        "BWP-041",
+        "BWP-010",
+        "BWP-016"
+      ],
+      "scope": "Definir criptografia autenticada para arquivos por SID (ex. AES-256-GCM) com gerenciamento explícito de chaves aprovado pela TI, hash Argon2id com salt para senhas, ACLs NTFS/SMB e segregação de metadados administrativos.",
+      "acceptance_criteria": [
+        "Nenhuma senha fica reversível nem em texto puro; verificação usa Argon2id com salt e parâmetros versionados.",
+        "Arquivos confidenciais são criptografados/autenticados com chaves protegidas, nunca hardcoded no exe.",
+        "Administrador pode provisionar e usuário modificar somente seu verificador de senha, sem editar SID, perfil ou privilégios.",
+        "Prova de conceito valida acesso multi-PC e recuperação de chaves; sem prova, bloqueia release do módulo de login."
+      ]
+    },
+    {
+      "id": "BWP-043",
+      "title": "Implementar login vinculado ao SID Windows",
+      "milestone": "M1",
+      "priority": "P0",
+      "size": "L",
+      "status": "A fazer",
+      "dependencies": [
+        "BWP-040",
+        "BWP-041",
+        "BWP-042"
+      ],
+      "scope": "Tela com Windows username somente leitura + campo senha; usar SID do token para buscar registro ativo e validar credencial, sem opção de alternar usuário.",
+      "acceptance_criteria": [
+        "Não há campo editável de login; não é possível autenticar como outra conta apenas conhecendo a senha dela.",
+        "SID ausente, bloqueado ou diferente impede login ainda que o nome textual e a senha coincidam.",
+        "Cada IPC sensível revalida a identidade e autorização no Rust.",
+        "Sem acesso ao cadastro na rede, a primeira autenticação falha fechada; política offline posterior exige decisão de segurança explícita."
+      ]
+    },
+    {
+      "id": "BWP-044",
+      "title": "Permitir troca de senha e reset administrativo",
+      "milestone": "M2",
+      "priority": "P0",
+      "size": "M",
+      "status": "A fazer",
+      "dependencies": [
+        "BWP-043"
+      ],
+      "scope": "Senha temporária alterada no primeiro login; troca pela conta atual com senha antiga; reset apenas no app Admin, sem acesso ao cadastro de outros usuários.",
+      "acceptance_criteria": [
+        "Troca exige senha atual, valida política de senha e atualiza somente arquivo associado ao SID corrente.",
+        "Primeiro acesso com senha temporária exige alteração antes de usar projetos/tarefas.",
+        "Reset feito por Admin obriga troca no próximo login, com auditoria e sem revelar senha anterior.",
+        "Escrita SMB concorrente é protegida e versões antigas não podem sobrescrever nova senha silenciosamente."
+      ]
+    },
+    {
+      "id": "BWP-045",
+      "title": "Testar personificação, isolamento e políticas Windows",
+      "milestone": "M3",
+      "priority": "P0",
+      "size": "L",
+      "status": "A fazer",
+      "dependencies": [
+        "BWP-043",
+        "BWP-044",
+        "BWP-031"
+      ],
+      "scope": "Testes adversariais com dois SIDs, mesma string de login, máquina diferente, conta desabilitada, armazenamento adulterado e sessão desconectada.",
+      "acceptance_criteria": [
+        "Informar SID ou username falso à UI/IPC não permite assumir outra identidade.",
+        "Nome repetido em PC distinto não recebe acesso da conta original.",
+        "Conta bloqueada e sem ACL não acessa dados protegidos; resultado validado em SMB corporativo.",
+        "Não é possível elevar-se a Admin alterando um arquivo de usuário."
+      ]
+    },
+    {
+      "id": "BWP-046",
+      "title": "Homologar distribuição separada dos dois aplicativos",
+      "milestone": "M3",
+      "priority": "P0",
+      "size": "M",
+      "status": "A fazer",
+      "dependencies": [
+        "BWP-033",
+        "BWP-045"
+      ],
+      "scope": "Homologar Workspace e WorkspaceAdmin como EXEs distintos, com acesso restrito à área administrativa e atualização versionada, sem servidor HTTP.",
+      "acceptance_criteria": [
+        "Dois EXEs em ZIP, com versões, checksums e guia de instalação/extração.",
+        "Teste em máquina de usuário e de administrador demonstra menus e permissões corretas.",
+        "Procedimento de revogação de direitos administrativos e recuperação de acesso validado pela TI."
+      ]
+    }
+  ]
+}
