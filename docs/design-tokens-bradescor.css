@@ -1,0 +1,38 @@
+/* Tokens propostos: Bradescor Glass. Identidade sujeita a validação corporativa. */
+:root{
+  --brand-primary:#CC092F;
+  --brand-primary-dark:#900F15;
+  --brand-primary-soft:#F9E5E9;
+  --color-background:#F7F7F9;
+  --color-surface:rgba(255,255,255,.78);
+  --color-surface-solid:#FFFFFF;
+  --color-text:#252127;
+  --color-text-muted:#716870;
+  --color-border:rgba(120,80,95,.18);
+  --color-success:#16826B;
+  --color-warning:#C87E22;
+  --color-danger:#B92C46;
+  --font-ui:"Bradesco Sans",Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --glass-blur:18px;
+  --radius-card:18px;
+  --radius-control:10px;
+}
+[data-theme="dark"]{
+  color-scheme:dark;
+  --color-background:#171316;
+  --color-surface:rgba(41,33,37,.76);
+  --color-surface-solid:#292125;
+  --color-text:#F9F5F6;
+  --color-text-muted:#C4B4BB;
+  --color-border:rgba(232,181,195,.18);
+  --brand-primary:#E64A68;
+  --brand-primary-soft:#49333B;
+}
+.glass-surface{
+  background:var(--color-surface);
+  backdrop-filter:blur(var(--glass-blur));
+  border:1px solid var(--color-border);
+  border-radius:var(--radius-card);
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+@media(forced-colors:active){.glass-surface{background:Canvas;border:1px solid CanvasText}}
